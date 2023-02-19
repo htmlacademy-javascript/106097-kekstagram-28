@@ -4,6 +4,10 @@ function checkLength (string, length) {
   return string.length <= length;
 }
 
+checkLength('проверяемая строка', 20);
+checkLength('проверяемая строка', 18);
+checkLength('проверяемая строка', 10);
+
 // Функция для проверки, является ли строка палиндромом.
 function isPalindrom (string) {
   string = string.toLowerCase();
@@ -15,6 +19,11 @@ function isPalindrom (string) {
   }
   return true;
 }
+
+isPalindrom('топот');
+isPalindrom('ДовОд');
+isPalindrom('Кекс');
+isPalindrom('Лёша на полке клопа нашёл ');
 
 // Функция, которая принимает строку, извлекает содержащиеся в ней цифры от 0 до 9 и возвращает их в виде целого положительного числа.
 function extractNumbers (string) {
@@ -29,6 +38,14 @@ function extractNumbers (string) {
   return parseInt(result, 10);
 
 }
+
+extractNumbers('2023 год');
+extractNumbers('ECMAScript 2022');
+extractNumbers('1 кефир, 0.5 батона');
+extractNumbers('а я томат');
+extractNumbers(2023);
+extractNumbers(-1);
+extractNumbers(1.5);
 
 // Функция, которая возвращает исходную строку, дополненную указанными символами до заданной длины.
 function addSymbols (string, minLength, symbols) {
@@ -46,3 +63,9 @@ function addSymbols (string, minLength, symbols) {
 
   return string;
 }
+
+addSymbols('1', 2, '0');
+addSymbols('1', 4, '0');
+addSymbols('q', 4, 'werty');
+addSymbols('q', 4, 'we');
+addSymbols('qwerty', 4, '0');
