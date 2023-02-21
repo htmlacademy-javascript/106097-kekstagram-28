@@ -7,16 +7,13 @@ checkLength('проверяемая строка', 18);
 checkLength('проверяемая строка', 10);
 
 // Функция для проверки, является ли строка палиндромом.
-function isPalindrom (string) {
-  string = string.toLowerCase();
-  string = string.replace(/\s+/g, '');
-  for (let i = 0; i < string.length; i++) {
-    if (string.at(i) !== string.at(-i - 1)) {
-      return false;
-    }
-  }
-  return true;
-}
+const isPalindrom = (string) => {
+  string = string
+    .toLowerCase()
+    .replace(/\s+/g, '');
+  const reversedString = string.split('').reverse().join('');
+  return reversedString === string;
+};
 
 isPalindrom('топот');
 isPalindrom('ДовОд');
