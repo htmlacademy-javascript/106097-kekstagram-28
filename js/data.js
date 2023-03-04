@@ -78,4 +78,4 @@ const createPosts = () => {
   return posts;
 };
 
-console.log(createPosts);
+createPosts();
