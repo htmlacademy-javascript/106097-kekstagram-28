@@ -1,4 +1,4 @@
-import {getRandomInteger, getRandomArrayElement, createIdGenerator} from 'util.js';
+import {getRandomInteger, getRandomArrayElement, createIdGenerator} from './util.js';
 
 const MESSAGES = [
   'Всё отлично!',
@@ -78,4 +78,4 @@ const createPosts = () => {
   return posts;
 };
 
-createPosts();
+export {createPosts};
