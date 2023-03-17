@@ -1,18 +1,18 @@
 import {isEscapeKey, isEnterKey} from './util.js';
-import {posts} from './avatar.js';
 
-const body = document.querySelector('body');
+const COMMENTS_SHOW = 5;
+
+const body = document.body;
 const pictures = document.querySelector('.pictures');
 const popup = document.querySelector('.big-picture');
+const popupSocialElement = document.querySelector('.big-picture__social');
 const popupImage = popup.querySelector('.big-picture__img img');
 const popupLikes = popup.querySelector('.likes-count');
 const popupCaption = popup.querySelector('.social__caption');
-const comments = popup.querySelector('.social__comments');
-const commentsCount = popup.querySelector('.social__comment-count');
+const commentsList = popup.querySelector('.social__comments');
+const commentsCountElement = popup.querySelector('.social__comment-count');
 const popupCloseButton = popup.querySelector('.big-picture__cancel');
-const commentLoader = popup.querySelector('.comments-loader');
 const commentTemplate = document.querySelector('#comment').content.querySelector('li');
-const commentsFragment = document.createDocumentFragment();
 
 const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
@@ -27,72 +27,94 @@ const onCloseButtonKeydown = (evt) => {
   }
 };
 
-const onCloseButtonClick = () => {
-  closePopup();
+const onCloseButtonClick = closePopup;
+
+popupCloseButton.addEventListener('click', onCloseButtonClick);
+popupCloseButton.addEventListener('keydown', onCloseButtonKeydown);
+
+const createCommentElement = ({avatar, name, message}) => {
+  const commentElement = commentTemplate.cloneNode(true);
+  commentElement.querySelector('.social__picture').src = avatar;
+  commentElement.querySelector('.social__picture').alt = name;
+  commentElement.querySelector('.social__text').textContent = message;
+  return commentElement;
 };
+
+const renderComments = (comments) => {
+  const commentsFragment = document.createDocumentFragment();
+  commentsFragment.append(...comments.map(createCommentElement));
+  commentsList.appendChild(commentsFragment);
+};
+
+const loadMore = (comments) => {
+  const renderedCommentsAmount = popup.querySelectorAll('.social__comment').length;
+  const newComments = comments.slice(renderedCommentsAmount, renderedCommentsAmount + COMMENTS_SHOW);
+  renderComments(newComments);
+
+  updateCommentsAmount(comments.length);
+};
+
+function updateCommentsAmount (commentsLength) {
+  const renderedCommentsAmount = popup.querySelectorAll('.social__comment').length;
+  const commentsLeft = commentsLength - renderedCommentsAmount;
+
+  if (commentsLength <= COMMENTS_SHOW) {
+    commentsCountElement.textContent = `Комментариев: ${commentsLength}`;
+  } else {
+    commentsCountElement.innerHTML = `${renderedCommentsAmount} из <span class="comments-count">${commentsLength}</span> комментариев`;
+  }
+
+  const currentCommentLoader = popup.querySelector('.comments-loader');
+  if (commentsLeft > 0) {
+    currentCommentLoader.classList.remove('hidden');
+  } else {
+    currentCommentLoader.classList.add('hidden');
+  }
+}
 
 function closePopup () {
   popup.classList.add('hidden');
-  commentsCount.classList.remove('hidden');
-  commentLoader.classList.remove('hidden');
   body.classList.remove('modal-open');
   document.removeEventListener('keydown', onDocumentKeydown);
-  popupCloseButton.removeEventListener('click', onCloseButtonClick);
-  popupCloseButton.removeEventListener('keydown', onCloseButtonKeydown);
 }
 
-const deleteComments = () => {
-  comments.innerHTML = '';
+const renderPictureModal = (url, likes, description) => {
+  commentsList.innerHTML = '';
+
+  popupImage.src = url;
+  popupLikes.textContent = likes;
+  popupCaption.textContent = description;
 };
 
-const renderComments = (id) => {
-  deleteComments();
-
-  const postComments = posts[id - 1].comments;
-
-  for (let i = 0; i < postComments.length; i++) {
-    const commentElement = commentTemplate.cloneNode(true);
-    commentElement.querySelector('.social__picture').src = postComments[i].avatar;
-    commentElement.querySelector('.social__picture').alt = postComments[i].name;
-    commentElement.querySelector('.social__text').textContent = postComments[i].message;
-    commentsFragment.appendChild(commentElement);
-  }
-
-  comments.appendChild(commentsFragment);
-};
-
-const renderPicture = (id) => {
-  const post = posts[id - 1];
-
-  popupImage.src = post.url;
-  popupLikes.textContent = post.likes;
-  commentsCount.textContent = post.comments.length;
-  popupCaption.textContent = post.description;
-};
-
-function openPopup () {
+const openPopup = () => {
   popup.classList.remove('hidden');
-  commentsCount.classList.add('hidden');
-  commentLoader.classList.add('hidden');
   body.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
-  popupCloseButton.addEventListener('click', onCloseButtonClick);
-  popupCloseButton.addEventListener('keydown', onCloseButtonKeydown);
-}
+};
+
+const renderPopup = (url, likes, comments, description) => {
+  openPopup();
+
+  renderPictureModal(url, likes, description);
+  const commentsForRender = comments.slice(0, COMMENTS_SHOW);
+  renderComments(commentsForRender);
+  updateCommentsAmount(comments.length);
+
+  const currentCommentLoader = popup.querySelector('.comments-loader');
+  const newCommentLoader = currentCommentLoader.cloneNode(true);
+  popupSocialElement.replaceChild(newCommentLoader, currentCommentLoader);
+  newCommentLoader.addEventListener('click', () => loadMore(comments));
+};
 
 const onPictureClick = (evt) => {
-  if (evt.target.tagName === 'IMG') {
-    openPopup();
-    renderPicture(evt.target.dataset.id);
-    renderComments(evt.target.dataset.id);
+  if (evt.target.closest('.picture')) {
+    renderPopup(evt.target.dataset.id);
   }
 };
 
 const onPictureKeydown = (evt) => {
   if (isEnterKey(evt)) {
-    openPopup();
-    renderPicture(evt.target.dataset.id);
-    renderComments(evt.target.dataset.id);
+    renderPopup(evt.target.dataset.id);
   }
 };
 

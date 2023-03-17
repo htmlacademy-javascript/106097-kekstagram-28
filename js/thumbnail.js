@@ -1,4 +1,5 @@
 import {createPosts} from './data.js';
+import * as popup from './popup.js';
 
 const pictureTemplate = document.querySelector('#picture').content;
 const pictures = document.querySelector('.pictures');
@@ -6,19 +7,21 @@ const pictures = document.querySelector('.pictures');
 const posts = createPosts();
 const postsFragment = document.createDocumentFragment();
 
-for (const {id, url, likes, comments} of posts) {
+const createPictureElement = ({url, likes, comments, description}) => {
   const pictureElement = pictureTemplate.cloneNode(true);
-  const picture = pictureElement.querySelector('.picture');
 
   pictureElement.querySelector('.picture__img').src = url;
-  pictureElement.querySelector('.picture__img').dataset.id = id;
-  picture.dataset.id = id;
   pictureElement.querySelector('.picture__likes').textContent = likes;
   pictureElement.querySelector('.picture__comments').textContent = comments.length;
 
-  postsFragment.appendChild(pictureElement);
-}
+  pictureElement.addEventListener('click', () => {
+    popup.renderPopup(url, likes, comments, description);
+  });
 
+  return pictureElement;
+};
+
+postsFragment.append(...posts.map(createPictureElement));
 pictures.appendChild(postsFragment);
 
 export {posts};
