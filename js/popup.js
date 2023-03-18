@@ -2,8 +2,6 @@ import {isEscapeKey, isEnterKey} from './util.js';
 
 const COMMENTS_SHOW = 5;
 
-const body = document.body;
-const pictures = document.querySelector('.pictures');
 const popup = document.querySelector('.big-picture');
 const popupSocialElement = document.querySelector('.big-picture__social');
 const popupImage = popup.querySelector('.big-picture__img img');
@@ -11,6 +9,8 @@ const popupLikes = popup.querySelector('.likes-count');
 const popupCaption = popup.querySelector('.social__caption');
 const commentsList = popup.querySelector('.social__comments');
 const commentsCountElement = popup.querySelector('.social__comment-count');
+const commentsShowedCountElement = popup.querySelector('.social__showed-comments-count');
+const commentsTotalCountElement = popup.querySelector('.comments-count');
 const popupCloseButton = popup.querySelector('.big-picture__cancel');
 const commentTemplate = document.querySelector('#comment').content.querySelector('li');
 
@@ -29,9 +29,6 @@ const onCloseButtonKeydown = (evt) => {
 
 const onCloseButtonClick = closePopup;
 
-popupCloseButton.addEventListener('click', onCloseButtonClick);
-popupCloseButton.addEventListener('keydown', onCloseButtonKeydown);
-
 const createCommentElement = ({avatar, name, message}) => {
   const commentElement = commentTemplate.cloneNode(true);
   commentElement.querySelector('.social__picture').src = avatar;
@@ -41,9 +38,7 @@ const createCommentElement = ({avatar, name, message}) => {
 };
 
 const renderComments = (comments) => {
-  const commentsFragment = document.createDocumentFragment();
-  commentsFragment.append(...comments.map(createCommentElement));
-  commentsList.appendChild(commentsFragment);
+  commentsList.append(...comments.map(createCommentElement));
 };
 
 const loadMore = (comments) => {
@@ -61,7 +56,8 @@ function updateCommentsAmount (commentsLength) {
   if (commentsLength <= COMMENTS_SHOW) {
     commentsCountElement.textContent = `Комментариев: ${commentsLength}`;
   } else {
-    commentsCountElement.innerHTML = `${renderedCommentsAmount} из <span class="comments-count">${commentsLength}</span> комментариев`;
+    commentsShowedCountElement.textContent = renderedCommentsAmount;
+    commentsTotalCountElement.textContent = commentsLength;
   }
 
   const currentCommentLoader = popup.querySelector('.comments-loader');
@@ -74,7 +70,7 @@ function updateCommentsAmount (commentsLength) {
 
 function closePopup () {
   popup.classList.add('hidden');
-  body.classList.remove('modal-open');
+  document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', onDocumentKeydown);
 }
 
@@ -88,7 +84,7 @@ const renderPictureModal = (url, likes, description) => {
 
 const openPopup = () => {
   popup.classList.remove('hidden');
-  body.classList.add('modal-open');
+  document.body.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
 };
 
@@ -97,7 +93,10 @@ const renderPopup = (url, likes, comments, description) => {
 
   renderPictureModal(url, likes, description);
   const commentsForRender = comments.slice(0, COMMENTS_SHOW);
-  renderComments(commentsForRender);
+
+  if (commentsForRender.length > 0) {
+    renderComments(commentsForRender);
+  }
   updateCommentsAmount(comments.length);
 
   const currentCommentLoader = popup.querySelector('.comments-loader');
@@ -106,17 +105,7 @@ const renderPopup = (url, likes, comments, description) => {
   newCommentLoader.addEventListener('click', () => loadMore(comments));
 };
 
-const onPictureClick = (evt) => {
-  if (evt.target.closest('.picture')) {
-    renderPopup(evt.target.dataset.id);
-  }
-};
+popupCloseButton.addEventListener('click', onCloseButtonClick);
+popupCloseButton.addEventListener('keydown', onCloseButtonKeydown);
 
-const onPictureKeydown = (evt) => {
-  if (isEnterKey(evt)) {
-    renderPopup(evt.target.dataset.id);
-  }
-};
-
-pictures.addEventListener('click', onPictureClick);
-pictures.addEventListener('keydown', onPictureKeydown);
+export {renderPopup};

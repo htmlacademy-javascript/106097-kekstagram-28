@@ -1,3 +1,5 @@
 import './util.js';
 import './data.js';
-import './thumbnail.js';
+import {renderPosts} from './thumbnail.js';
+
+renderPosts();
