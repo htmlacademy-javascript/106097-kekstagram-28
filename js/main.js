@@ -1,4 +1,5 @@
 import './util.js';
 import './data.js';
-import './avatar.js';
-import './popup.js';
+import {renderPosts} from './thumbnail.js';
+
+renderPosts();
