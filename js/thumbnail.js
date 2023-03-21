@@ -1,4 +1,3 @@
-import {createPosts} from './data.js';
 import {renderPopup} from './popup.js';
 
 const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
@@ -18,8 +17,7 @@ const createPictureElement = ({url, likes, comments, description}) => {
   return pictureElement;
 };
 
-const renderPosts = () => {
-  const posts = createPosts();
+const renderPosts = (posts) => {
   pictures.append(...posts.map(createPictureElement));
 };
 
