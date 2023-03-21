@@ -8,7 +8,6 @@ const popupImage = popup.querySelector('.big-picture__img img');
 const popupLikes = popup.querySelector('.likes-count');
 const popupCaption = popup.querySelector('.social__caption');
 const commentsList = popup.querySelector('.social__comments');
-const commentsCountElement = popup.querySelector('.social__comment-count');
 const commentsShowedCountElement = popup.querySelector('.social__showed-comments-count');
 const commentsTotalCountElement = popup.querySelector('.comments-count');
 const popupCloseButton = popup.querySelector('.big-picture__cancel');
@@ -53,12 +52,8 @@ function updateCommentsAmount (commentsLength) {
   const renderedCommentsAmount = popup.querySelectorAll('.social__comment').length;
   const commentsLeft = commentsLength - renderedCommentsAmount;
 
-  if (commentsLength <= COMMENTS_SHOW) {
-    commentsCountElement.textContent = `Комментариев: ${commentsLength}`;
-  } else {
-    commentsShowedCountElement.textContent = renderedCommentsAmount;
-    commentsTotalCountElement.textContent = commentsLength;
-  }
+  commentsShowedCountElement.textContent = renderedCommentsAmount;
+  commentsTotalCountElement.textContent = commentsLength;
 
   const currentCommentLoader = popup.querySelector('.comments-loader');
   if (commentsLeft > 0) {
@@ -89,20 +84,17 @@ const openPopup = () => {
 };
 
 const renderPopup = (url, likes, comments, description) => {
-  openPopup();
-
   renderPictureModal(url, likes, description);
   const commentsForRender = comments.slice(0, COMMENTS_SHOW);
-
-  if (commentsForRender.length > 0) {
-    renderComments(commentsForRender);
-  }
+  renderComments(commentsForRender);
   updateCommentsAmount(comments.length);
 
   const currentCommentLoader = popup.querySelector('.comments-loader');
   const newCommentLoader = currentCommentLoader.cloneNode(true);
   popupSocialElement.replaceChild(newCommentLoader, currentCommentLoader);
   newCommentLoader.addEventListener('click', () => loadMore(comments));
+
+  openPopup();
 };
 
 popupCloseButton.addEventListener('click', onCloseButtonClick);

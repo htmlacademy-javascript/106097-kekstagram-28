@@ -1,5 +1,6 @@
 import './util.js';
-import './data.js';
+import {createPosts} from './data.js';
 import {renderPosts} from './thumbnail.js';
 
-renderPosts();
+const posts = createPosts();
+renderPosts(posts);
