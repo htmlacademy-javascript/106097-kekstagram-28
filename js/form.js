@@ -68,23 +68,12 @@ const validateHashtagsAmount = () => {
 };
 
 const validateHashtagsUniqueness = () => {
-  const hashtags = hashtagsElement.value
+  const lowerCaseHashtags = hashtagsElement.value
     .trim()
-    .split(/\s+/);
-  const filteredHashtags = hashtags.filter((element) => element !== '');
-  if (filteredHashtags.length === 1) {
-    return true;
-  }
+    .split(/\s+/)
+    .toLowerCase();
 
-
-  for (let i = 0; i < filteredHashtags.length; i++) {
-    const hashtagsLeft = filteredHashtags.slice(i + 1);
-    if (hashtagsLeft.includes(filteredHashtags[i])) {
-      return false;
-    }
-  }
-
-  return true;
+  return lowerCaseHashtags.length === new Set(lowerCaseHashtags).size;
 };
 
 const validateHashtag = () => {
