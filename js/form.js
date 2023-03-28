@@ -7,9 +7,10 @@ const REGEXP = new RegExp('^#[a-zа-яё0-9]{1,19}$', 'i');
 const formElement = document.querySelector('.img-upload__form');
 const uploadElement = formElement.querySelector('#upload-file');
 const overlayElement = formElement.querySelector('.img-upload__overlay');
-const previewPopupCancelBtn = formElement.querySelector('#upload-cancel');
+const previewPopupCancelBtn = formElement.querySelector('.img-upload__cancel');
 const hashtagsElement = formElement.querySelector('.text__hashtags');
 const descriptionElement = formElement.querySelector('.text__description');
+const uploadFormElement = document.querySelector('.img-upload__form');
 
 const pristineForHashtags = new Pristine(formElement, {
   classTo: 'img-upload__form',
@@ -30,8 +31,9 @@ const openPreviewPopup = () => {
 };
 
 const closePreviewPopup = () => {
-  overlayElement.classList.add('hidden');
   document.body.classList.remove('modal-open');
+  overlayElement.classList.add('hidden');
+  uploadFormElement.classList.remove('has-success');
   formElement.reset();
   pristineForHashtags.reset();
   pristineForDescription.reset();
@@ -45,11 +47,13 @@ function onDocumentKeydown (evt) {
   }
 }
 
-const onCancelBtnKeydown = (evt) => {
+const onCancelButtonKeydown = (evt) => {
   if (isEnterKey(evt)) {
     closePreviewPopup();
   }
 };
+
+const onCancelButtonClick = closePreviewPopup;
 
 uploadElement.addEventListener('change', () => {
 
@@ -98,5 +102,5 @@ formElement.addEventListener('submit', (evt) => {
   pristineForDescription.validate();
 });
 
-previewPopupCancelBtn.addEventListener('click', onCancelBtnKeydown);
-previewPopupCancelBtn.addEventListener('keydown', onCancelBtnKeydown);
+previewPopupCancelBtn.addEventListener('click', onCancelButtonClick);
+previewPopupCancelBtn.addEventListener('keydown', onCancelButtonKeydown);
