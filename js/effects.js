@@ -58,7 +58,7 @@ noUiSlider.create(sliderElement, {
     min: 0,
     max: 100,
   },
-  start: 80,
+  start: 100,
   step: 1,
 });
 
@@ -70,9 +70,8 @@ sliderElement.noUiSlider.on('slide', () => {
 
 const onEffectChange = (evt) => {
   effectName = evt.target.value;
-  imagePreview.removeAttribute('class');
   imagePreview.removeAttribute('style');
-  imagePreview.classList.add(`effects__preview--${effectName}`);
+  imagePreview.className = `effects__preview--${effectName}`;
 
   if (evt.target.value === DEFAULT_EFFECT) {
     effectLevelElement.style.display = 'none';
