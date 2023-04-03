@@ -1,8 +1,13 @@
-import {isEscapeKey, isEnterKey} from './util.js';
+import {isEscapeKey, isEnterKey, showAlert} from './util.js';
+import { sendData } from './api.js';
 
 const MAX_HASHTAGS_AMOUNT = 5;
 const MAX_DESCRIPTION_LENGTH = 140;
 const REGEXP = new RegExp('^#[a-zа-яё0-9]{1,19}$', 'i');
+const SubmitButtonText = {
+  IDLE: 'Сохранить',
+  SENDING: 'Сохраняю...'
+};
 
 const formElement = document.querySelector('.img-upload__form');
 const uploadElement = formElement.querySelector('#upload-file');
@@ -11,6 +16,10 @@ const previewPopupCancelBtn = formElement.querySelector('.img-upload__cancel');
 const hashtagsElement = formElement.querySelector('.text__hashtags');
 const descriptionElement = formElement.querySelector('.text__description');
 const uploadFormElement = document.querySelector('.img-upload__form');
+const submitButton = document.querySelector('.img-upload__submit');
+const successPopupTemplate = document.querySelector('#success').content.querySelector('.success');
+const errorPopupTemplate = document.querySelector('#error').content.querySelector('.error');
+const errorPopupBtn = errorPopupTemplate.querySelector('.error__button');
 
 const pristineForHashtags = new Pristine(formElement, {
   classTo: 'img-upload__form',
@@ -40,6 +49,13 @@ const closePreviewPopup = () => {
   document.removeEventListener('keydown', onDocumentKeydown);
 };
 
+function closeSuccessPopup () {
+  document.body.classList.remove('modal-open');
+  const successPopupElement = document.querySelector('.success');
+  successPopupElement.classList.add('hidden');
+  document.removeEventListener('keydown', onDocumentKeydown);
+}
+
 function onDocumentKeydown (evt) {
   if (isEscapeKey(evt) && !(document.activeElement === descriptionElement) && !(document.activeElement === hashtagsElement)) {
     evt.preventDefault();
@@ -54,6 +70,17 @@ const onCancelButtonKeydown = (evt) => {
 };
 
 const onCancelButtonClick = closePreviewPopup;
+
+const showSuccessPopup = () => {
+  const successPopupElement = successPopupTemplate.cloneNode(true);
+  const successPopupBtn = successPopupElement.querySelector('.success__button');
+  successPopupBtn.addEventListener('click', () => {
+    closeSuccessPopup();
+  });
+  document.addEventListener('keydown', onDocumentKeydown);
+  // Добавить закрытие окна при клике вне окна
+  document.body.append(successPopupElement);
+};
 
 uploadElement.addEventListener('change', () => {
 
@@ -74,8 +101,8 @@ const validateHashtagsAmount = () => {
 const validateHashtagsUniqueness = () => {
   const lowerCaseHashtags = hashtagsElement.value
     .trim()
-    .split(/\s+/)
-    .toLowerCase();
+    .toLowerCase()
+    .split(/\s+/);
 
   return lowerCaseHashtags.length === new Set(lowerCaseHashtags).size;
 };
@@ -92,14 +119,38 @@ pristineForHashtags.addValidator(hashtagsElement, validateHashtagsUniqueness, '�
 pristineForHashtags.addValidator(hashtagsElement, validateHashtag, 'Введите корректный хештег');
 
 const validateDescription = () => descriptionElement.value.length <= MAX_DESCRIPTION_LENGTH;
-
 pristineForDescription.addValidator(descriptionElement, validateDescription, 'Максимальная длина комментария 140 символов');
+
+const blockSubmitButton = () => {
+  submitButton.disabled = true;
+  submitButton.textContent = SubmitButtonText.SENDING;
+};
+
+const unblockSubmitButton = () => {
+  submitButton.disabled = false;
+  submitButton.textContent = SubmitButtonText.IDLE;
+};
+
+const onSuccess = () => {
+  closePreviewPopup();
+  showSuccessPopup();
+};
 
 formElement.addEventListener('submit', (evt) => {
   evt.preventDefault();
 
-  pristineForHashtags.validate();
-  pristineForDescription.validate();
+  console.log(validateDescription());
+  const isValid = pristineForHashtags.validate() && pristineForDescription.validate();
+
+  if (isValid) {
+    blockSubmitButton();
+    sendData(new FormData(evt.target))
+      .then(onSuccess)
+      .catch((err) => {
+        showAlert(err.message);
+      })
+      .finally(unblockSubmitButton);
+  }
 });
 
 previewPopupCancelBtn.addEventListener('click', onCancelButtonClick);
