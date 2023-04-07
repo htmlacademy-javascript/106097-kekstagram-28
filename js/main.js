@@ -1,9 +1,11 @@
 import './util.js';
-import {createPosts} from './data.js';
-import {renderPosts} from './thumbnail.js';
 import './form.js';
 import './scale.js';
 import './effects.js';
+import {renderPosts} from './thumbnail.js';
+import {getData} from './api.js';
+import { showUploadErrorPopup } from './message.js';
 
-const posts = createPosts();
-renderPosts(posts);
+getData((posts) => {
+  renderPosts(posts);
+}, showUploadErrorPopup);

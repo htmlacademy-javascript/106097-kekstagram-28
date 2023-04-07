@@ -17,27 +17,24 @@ const resetScale = () => {
   changePreviewScale(SCALE_DEFAULT / 100);
 };
 
-scaleControlSmaller.addEventListener('click', () => {
+const changeScale = (step) => {
   let scale = parseInt(scaleValue.value, 10);
-  scale -= SCALE_STEP;
+  scale += step;
 
   if (scale < SCALE_MIN) {
     scale = SCALE_MIN;
-  }
-
-  changePreviewScale(scale / 100);
-  scaleValue.value = `${scale}%`;
-});
-
-scaleControlBigger.addEventListener('click', () => {
-  let scale = parseInt(scaleValue.value, 10);
-  scale += SCALE_STEP;
-
-  if (scale > SCALE_MAX) {
+  } else if (scale > SCALE_MAX) {
     scale = SCALE_MAX;
   }
+
   changePreviewScale(scale / 100);
   scaleValue.value = `${scale}%`;
-});
+};
+
+const onControlSmallerClick = () => changeScale(-SCALE_STEP);
+const onControlBiggerClick = () => changeScale(SCALE_STEP);
+
+scaleControlSmaller.addEventListener('click', onControlSmallerClick);
+scaleControlBigger.addEventListener('click', onControlBiggerClick);
 
 resetScale();
