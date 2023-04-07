@@ -4,12 +4,8 @@ import './scale.js';
 import './effects.js';
 import {renderPosts} from './thumbnail.js';
 import {getData} from './api.js';
-import { showAlert } from './util.js';
+import { showUploadErrorPopup } from './message.js';
 
-getData()
-  .then((posts) => {
-    renderPosts(posts);
-  })
-  .catch((err) => {
-    showAlert(err.message);
-  });
+getData((posts) => {
+  renderPosts(posts);
+}, showUploadErrorPopup);

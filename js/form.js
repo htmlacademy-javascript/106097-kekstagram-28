@@ -1,6 +1,7 @@
-import {isEscapeKey, isEnterKey, showAlert} from './util.js';
+import { isEscapeKey, isEnterKey } from './util.js';
 import { sendData } from './api.js';
 import { pristine } from './validation.js';
+import { showSuccessPopup, showErrorPopup } from './message.js';
 
 const SubmitButtonText = {
   IDLE: 'Сохранить',
@@ -15,9 +16,6 @@ const uploadFormElement = document.querySelector('.img-upload__form');
 const hashtagsElement = formElement.querySelector('.text__hashtags');
 const descriptionElement = formElement.querySelector('.text__description');
 const submitButton = document.querySelector('.img-upload__submit');
-const successPopupTemplate = document.querySelector('#success').content.querySelector('.success');
-const errorPopupTemplate = document.querySelector('#error').content.querySelector('.error');
-const errorPopupBtn = errorPopupTemplate.querySelector('.error__button');
 
 const openPreviewPopup = () => {
   overlayElement.classList.remove('hidden');
@@ -34,13 +32,6 @@ const closePreviewPopup = () => {
   document.removeEventListener('keydown', onDocumentKeydown);
 };
 
-function closeSuccessPopup () {
-  document.body.classList.remove('modal-open');
-  const successPopupElement = document.querySelector('.success');
-  successPopupElement.classList.add('hidden');
-  document.removeEventListener('keydown', onDocumentKeydown);
-}
-
 function onDocumentKeydown (evt) {
   if (isEscapeKey(evt) && !(document.activeElement === descriptionElement) && !(document.activeElement === hashtagsElement)) {
     evt.preventDefault();
@@ -55,17 +46,6 @@ const onCancelButtonKeydown = (evt) => {
 };
 
 const onCancelButtonClick = closePreviewPopup;
-
-const showSuccessPopup = () => {
-  const successPopupElement = successPopupTemplate.cloneNode(true);
-  const successPopupBtn = successPopupElement.querySelector('.success__button');
-  successPopupBtn.addEventListener('click', () => {
-    closeSuccessPopup();
-  });
-  document.addEventListener('keydown', onDocumentKeydown);
-  // Добавить закрытие окна при клике вне окна
-  document.body.append(successPopupElement);
-};
 
 const blockSubmitButton = () => {
   submitButton.disabled = true;
@@ -82,16 +62,19 @@ const onSuccess = () => {
   showSuccessPopup();
 };
 
+const onError = (message) => {
+  closePreviewPopup();
+  showErrorPopup(message);
+};
+
 const onFormSubmit = (evt) => {
   evt.preventDefault();
 
   if (pristine.validate()) {
     blockSubmitButton();
-    sendData(new FormData(evt.target))
+    sendData(new FormData(evt.target), onError)
       .then(onSuccess)
-      .catch((err) => {
-        showAlert(err.message);
-      })
+      .catch((err) => onError(err.message))
       .finally(unblockSubmitButton);
   }
 };
