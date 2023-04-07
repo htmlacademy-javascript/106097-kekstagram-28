@@ -72,9 +72,7 @@ const onFormSubmit = (evt) => {
 
   if (pristine.validate()) {
     blockSubmitButton();
-    sendData(new FormData(evt.target), onError)
-      .then(onSuccess)
-      .catch((err) => onError(err.message))
+    sendData(new FormData(evt.target), onSuccess, onError)
       .finally(unblockSubmitButton);
   }
 };
