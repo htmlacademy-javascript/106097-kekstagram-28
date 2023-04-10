@@ -8,6 +8,8 @@ const SubmitButtonText = {
   SENDING: 'Сохраняю...'
 };
 
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
+
 const formElement = document.querySelector('.img-upload__form');
 const uploadElement = formElement.querySelector('#upload-file');
 const overlayElement = formElement.querySelector('.img-upload__overlay');
@@ -16,6 +18,18 @@ const uploadFormElement = document.querySelector('.img-upload__form');
 const hashtagsElement = formElement.querySelector('.text__hashtags');
 const descriptionElement = formElement.querySelector('.text__description');
 const submitButton = document.querySelector('.img-upload__submit');
+const fileChooser = formElement.querySelector('#upload-file');
+const previewImage = formElement.querySelector('.img-upload__preview img');
+
+const onFileUpload = () => {
+  const file = fileChooser.files[0];
+  const fileName = file.name.toLowerCase();
+
+  const matches = FILE_TYPES.some((element) => fileName.endsWith(element));
+  if (matches) {
+    previewImage.src = URL.createObjectURL(file);
+  }
+};
 
 const openPreviewPopup = () => {
   overlayElement.classList.remove('hidden');
@@ -81,3 +95,4 @@ uploadElement.addEventListener('change', openPreviewPopup);
 formElement.addEventListener('submit', onFormSubmit);
 previewPopupCancelBtn.addEventListener('click', onCancelButtonClick);
 previewPopupCancelBtn.addEventListener('keydown', onCancelButtonKeydown);
+fileChooser.addEventListener('change', onFileUpload);
