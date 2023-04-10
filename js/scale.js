@@ -13,7 +13,7 @@ const changePreviewScale = (value) => {
 };
 
 const resetScale = () => {
-  scaleValue.setAttribute('value', `${SCALE_DEFAULT}%`)
+  scaleValue.setAttribute('value', `${SCALE_DEFAULT}%`);
   changePreviewScale(SCALE_DEFAULT / 100);
 };
 
