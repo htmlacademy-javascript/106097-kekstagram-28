@@ -1,5 +1,5 @@
 import { renderPosts } from './thumbnail.js';
-import { getRandomArrayElement, debounce } from './util.js';
+import { getRandomArrayElement } from './util.js';
 
 const RANDOM_IMAGES_AMOUNT = 10;
 
