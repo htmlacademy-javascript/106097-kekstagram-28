@@ -47,6 +47,7 @@ const sliderElement = document.querySelector('.effect-level__slider');
 
 let effectName, filterName, filterValue, filterUnit;
 
+effectLevelElement.style.display = 'none';
 const resetEffects = () => {
   defaultEffectElement.checked = true;
   imagePreview.classList.add('effects__preview--none');
