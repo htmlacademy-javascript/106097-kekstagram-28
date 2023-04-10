@@ -38,3 +38,5 @@ scaleControlSmaller.addEventListener('click', onControlSmallerClick);
 scaleControlBigger.addEventListener('click', onControlBiggerClick);
 
 resetScale();
+
+export { resetScale };

@@ -47,12 +47,14 @@ const sliderElement = document.querySelector('.effect-level__slider');
 
 let effectName, filterName, filterValue, filterUnit;
 
-effectLevelElement.style.display = 'none';
 const resetEffects = () => {
   defaultEffectElement.checked = true;
-  imagePreview.classList.add('effects__preview--none');
+  imagePreview.classList = 'effects__preview--none';
   imagePreview.style.filter = null;
+  effectLevelElement.style.display = 'none';
 };
+
+resetEffects();
 
 noUiSlider.create(sliderElement, {
   range: {
@@ -93,4 +95,4 @@ const onEffectChange = (evt) => {
 
 effectsElements.forEach((element) => element.addEventListener('change', onEffectChange));
 
-export {resetEffects};
+export { resetEffects };

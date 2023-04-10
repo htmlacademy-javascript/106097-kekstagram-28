@@ -60,4 +60,4 @@ const setDiscussedOrder = (callback) => {
   });
 };
 
-export {showFilters, setDefaultOrder, setRandomOrder, renderRandomPosts, setDiscussedOrder, renderDiscussedOrder };
+export { showFilters, setDefaultOrder, setRandomOrder, renderRandomPosts, setDiscussedOrder, renderDiscussedOrder };
