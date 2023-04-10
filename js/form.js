@@ -8,7 +8,7 @@ const SubmitButtonText = {
   SENDING: 'Сохраняю...'
 };
 
-const FILE_TYPES = ['jpg', 'jpeg', 'png'];
+const FILES_TYPES = ['jpg', 'jpeg', 'png'];
 
 const formElement = document.querySelector('.img-upload__form');
 const uploadElement = formElement.querySelector('#upload-file');
@@ -25,7 +25,7 @@ const onFileUpload = () => {
   const file = fileChooser.files[0];
   const fileName = file.name.toLowerCase();
 
-  const matches = FILE_TYPES.some((element) => fileName.endsWith(element));
+  const matches = FILES_TYPES.some((element) => fileName.endsWith(element));
   if (matches) {
     previewImage.src = URL.createObjectURL(file);
   }
