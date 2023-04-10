@@ -17,7 +17,12 @@ const createPictureElement = ({url, likes, comments, description}) => {
   return pictureElement;
 };
 
+const deletePictures = () => {
+  pictures.querySelectorAll('.picture').forEach((element) => element.remove());
+};
+
 const renderPosts = (posts) => {
+  deletePictures();
   pictures.append(...posts.map(createPictureElement));
 };
 
