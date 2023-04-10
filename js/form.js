@@ -2,13 +2,15 @@ import { isEscapeKey, isEnterKey } from './util.js';
 import { sendData } from './api.js';
 import { pristine } from './validation.js';
 import { showSuccessPopup, showErrorPopup } from './message.js';
+import { resetScale } from './scale.js';
+import { resetEffects } from './effects.js';
 
 const SubmitButtonText = {
   IDLE: 'Сохранить',
   SENDING: 'Сохраняю...'
 };
 
-const FILES_TYPES = ['jpg', 'jpeg', 'png'];
+const FILES_TYPES = ['jpg', 'jpeg', 'png', 'webp'];
 
 const formElement = document.querySelector('.img-upload__form');
 const uploadElement = formElement.querySelector('#upload-file');
@@ -37,12 +39,26 @@ const openPreviewPopup = () => {
   document.addEventListener('keydown', onDocumentKeydown);
 };
 
+const reset = () => {
+  formElement.reset();
+  pristine.reset();
+  previewImage.src = '';
+  resetScale();
+  resetEffects();
+};
+
 const closePreviewPopup = () => {
   document.body.classList.remove('modal-open');
   overlayElement.classList.add('hidden');
   uploadFormElement.classList.remove('has-success');
-  formElement.reset();
-  pristine.reset();
+  reset();
+  document.removeEventListener('keydown', onDocumentKeydown);
+};
+
+const closeWithoutReset = () => {
+  document.body.classList.remove('modal-open');
+  overlayElement.classList.add('hidden');
+  uploadFormElement.classList.remove('has-success');
   document.removeEventListener('keydown', onDocumentKeydown);
 };
 
@@ -77,7 +93,7 @@ const onSuccess = () => {
 };
 
 const onError = (message) => {
-  closePreviewPopup();
+  closeWithoutReset();
   showErrorPopup(message);
 };
 
