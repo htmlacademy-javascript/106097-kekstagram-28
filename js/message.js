@@ -7,34 +7,46 @@ const errorUploadPopupTemplate = document.querySelector('#error--upload').conten
 const closeSuccessPopup = () => {
   document.body.classList.remove('modal-open');
   const successPopupElement = document.querySelector('.success');
-  successPopupElement.remove();
+  if (successPopupElement) {
+    successPopupElement.remove();
+  }
   document.removeEventListener('keydown', onDocumentKeydown);
 };
 
 const closeErrorPopup = () => {
   document.body.classList.remove('modal-open');
   const errorPopupElement = document.querySelector('.error');
-  errorPopupElement.remove();
+  if (errorPopupElement) {
+    errorPopupElement.remove();
+  }
   document.removeEventListener('keydown', onDocumentKeydown);
 };
 
 const showSuccessPopup = () => {
-  const successPopupElement = successPopupTemplate.cloneNode(true);
-  const successPopupBtn = successPopupElement.querySelector('.success__button');
+  const successElement = successPopupTemplate.cloneNode(true);
+  const successPopupBtn = successElement.querySelector('.success__button');
   successPopupBtn.addEventListener('click', closeSuccessPopup);
   document.addEventListener('keydown', onDocumentKeydown);
-  // Добавить закрытие окна при клике вне окна
-  document.body.append(successPopupElement);
+  const successPopupElement = successElement.querySelector('.success__inner');
+  successPopupElement.addEventListener('click', (evt) => {
+    evt.stopPropagation();
+  });
+  successElement.addEventListener('click', closeSuccessPopup);
+  document.body.append(successElement);
 };
 
 const showErrorPopup = (message) => {
-  const errorPopupElement = errorPopupTemplate.cloneNode(true);
-  errorPopupElement.querySelector('.error__title').textContent = message;
-  const errorPopupBtn = errorPopupElement.querySelector('.error__button');
+  const errorElement = errorPopupTemplate.cloneNode(true);
+  errorElement.querySelector('.error__title').textContent = message;
+  const errorPopupBtn = errorElement.querySelector('.error__button');
   errorPopupBtn.addEventListener('click', closeErrorPopup);
   document.addEventListener('keydown', onDocumentKeydown);
-  // Добавить закрытие окна при клике вне окна
-  document.body.append(errorPopupElement);
+  const errorPopupElement = errorElement.querySelector('.error__inner');
+  errorPopupElement.addEventListener('click', (evt) => {
+    evt.stopPropagation();
+  });
+  errorElement.addEventListener('click', closeErrorPopup);
+  document.body.append(errorElement);
 };
 
 const showUploadErrorPopup = (message) => {

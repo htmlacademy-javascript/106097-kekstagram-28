@@ -13,7 +13,7 @@ const changePreviewScale = (value) => {
 };
 
 const resetScale = () => {
-  scaleValue.value = `${SCALE_DEFAULT}%`;
+  scaleValue.setAttribute('value', `${SCALE_DEFAULT}%`);
   changePreviewScale(SCALE_DEFAULT / 100);
 };
 
@@ -28,7 +28,7 @@ const changeScale = (step) => {
   }
 
   changePreviewScale(scale / 100);
-  scaleValue.value = `${scale}%`;
+  scaleValue.setAttribute('value', `${scale}%`);
 };
 
 const onControlSmallerClick = () => changeScale(-SCALE_STEP);
